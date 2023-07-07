@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.10
+
 import xml.etree.ElementTree as ET
 from timecode_class import Timecode_Parser
 
