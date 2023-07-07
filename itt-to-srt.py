@@ -25,8 +25,6 @@ def extract_content(captions, output):
 
             new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
             
-            print(f"{line_position}\n{begin_tc} -> {begin.timecode}\n{end_tc} -> {end.timecode}")
-            # print(line_position, end_tc, dialogue)
     
         elif p.tag == "{http://www.w3.org/ns/ttml}br":
             new_line = new_line + p.tail + '\n'
@@ -68,8 +66,7 @@ def convert_timecodes(begin_tc, end_tc, fps):
 
 
 if __name__ == '__main__':
-    # og_subs = input("drag the file: ").strip()
-    og_subs = '/Users/albertorodriguez/Desktop/peer_review/chapters_titles/cc.itt'
+    og_subs = input("drag the file: ").strip()
     tree = ET.parse(og_subs)
     root = tree.getroot()
     output_file = f"{og_subs.removesuffix('.itt')}_applehit-fhfix.srt"
