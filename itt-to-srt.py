@@ -12,6 +12,7 @@ def extract_content(captions, output):
             if new_line != None:
                 save_to_srt(new_line, output)
                 line_position+=1
+                new_line = None
 
             begin_tc = p.get("begin")
             end_tc = p.get("end")
@@ -23,9 +24,13 @@ def extract_content(captions, output):
     
         elif p.tag == "{http://www.w3.org/ns/ttml}br":
             new_line = new_line + p.tail + '\n'
-
         
-
+        else:
+            print(p.tag)
+    
+    if new_line != None:
+        save_to_srt(new_line, output)
+        return
 
 
 
