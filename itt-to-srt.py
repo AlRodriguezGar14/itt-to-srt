@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from timecode_class import Timecode_Parser
 
 
 
@@ -6,6 +7,7 @@ import xml.etree.ElementTree as ET
 def extract_content(captions, output):
     line_position = 1
     new_line = None
+    fps = None
     for p in captions.iter():
 
         if p.tag == "{http://www.w3.org/ns/ttml}p":
@@ -18,21 +20,37 @@ def extract_content(captions, output):
             end_tc = p.get("end")
             dialogue = p.text
 
-            new_line = f"\n{line_position}\n{begin_tc} --> {end_tc}\n{dialogue}\n"
-        
+
+            begin, end = convert_timecodes(begin_tc, end_tc, fps)
+
+            new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
+            
+            print(f"{line_position}\n{begin_tc} -> {begin.timecode}\n{end_tc} -> {end.timecode}")
             # print(line_position, end_tc, dialogue)
     
         elif p.tag == "{http://www.w3.org/ns/ttml}br":
             new_line = new_line + p.tail + '\n'
         
+        elif p.tag == "{http://www.w3.org/ns/ttml}tt":
+            # Process "tt" elements
+            frame_rate = p.get("{http://www.w3.org/ns/ttml#parameter}frameRate")
+            multiplier = p.get("{http://www.w3.org/ns/ttml#parameter}frameRateMultiplier")
+            # print(frame_rate, multiplier)
+            fps = get_the_framerate(frame_rate, multiplier)
+            print(fps)
         else:
-            print(p.tag)
+            # print(p.tag)
+            continue
     
     if new_line != None:
         save_to_srt(new_line, output)
         return
 
 
+
+def get_the_framerate(frame_rate, multiplier):
+    a, b = multiplier.split(" ")
+    return round(int(frame_rate) * (int(a)/int(b)), 3)
 
 
 def save_to_srt(line, output):
@@ -42,6 +60,11 @@ def save_to_srt(line, output):
         f.write(line)
         f.close()
 
+
+def convert_timecodes(begin_tc, end_tc, fps):
+    begin = Timecode_Parser(begin_tc, fps)
+    end = Timecode_Parser(end_tc, fps)
+    return (begin, end)
 
 
 if __name__ == '__main__':
