@@ -24,8 +24,10 @@ def extract_content(captions, output):
 
 
             begin, end = convert_timecodes(begin_tc, end_tc, fps)
-
-            new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
+            if line_position == 1:
+                new_line = f"{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
+            else:
+                new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
             
     
         elif p.tag == "{http://www.w3.org/ns/ttml}br":
