@@ -1,3 +1,6 @@
+#!/usr/bin/env python3.10
+
+
 import xml.etree.ElementTree as ET
 from timecode_class import Timecode_Parser
 
@@ -22,13 +25,14 @@ def extract_content(captions, output):
 
 
             begin, end = convert_timecodes(begin_tc, end_tc, fps)
-
-            new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
+            if line_position == 1:
+                new_line = f"{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
+            else:
+                new_line = f"\n{line_position}\n{begin.timecode} --> {end.timecode}\n{dialogue}\n"
             
     
         elif p.tag == "{http://www.w3.org/ns/ttml}br":
-            new_line = new_line + p.tail + '\n'
-        
+            new_line = new_line + (p.tail if p.tail is not None else '') + '\n' 
         elif p.tag == "{http://www.w3.org/ns/ttml}tt":
             # Process "tt" elements
             frame_rate = p.get("{http://www.w3.org/ns/ttml#parameter}frameRate")
